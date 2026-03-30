@@ -10,8 +10,6 @@ if 'cnc' not in st.session_state:
     # Fetch once automatically so the dropdowns have all countries immediately
     st.session_state.cnc.fetch_rates("EUR")
 
-st.title("🌍 Real-Time Currency Converter")
-
 # 1. Setup Base Currency with THE FULL LIST
 # Now we use the list we just fetched automatically!
 base = st.selectbox(
