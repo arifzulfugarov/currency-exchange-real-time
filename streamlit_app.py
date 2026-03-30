@@ -17,18 +17,6 @@ if st.button("Fetch Latest Rates"):
     st.session_state.cnc.fetch_rates(base)
     st.success(f"Rates loaded for {base}!")
 
-# --- This part only appears AFTER you click the button above ---
-if st.session_state.cnc.available_currencies:
-    amount = st.number_input("2. Amount to convert", min_value=0.01, value=1.0)
-
-    # This is your second scrolling list (the one from the API)
-    to_cur = st.selectbox("3. Select Target Currency", st.session_state.cnc.available_currencies)
-
-    if st.button("Convert"):
-        result = st.session_state.cnc.convert(amount, base, to_cur)
-        st.metric(label="Result", value=f"{result:.2f} {to_cur}")
-
-
 # 2. Conversion Inputs
 amount = st.number_input("Amount to convert", min_value=0.0, value=1.0)
 
