@@ -14,14 +14,23 @@ if st.button("Fetch Latest Rates"):
     st.session_state.cnc.fetch_rates(base)
     st.success(f"Rates updated for {base}!")
 
+options = st.session_state.cnc.available_currencies
+
 # 2. Conversion Inputs
 amount = st.number_input("Amount to convert", min_value=0.0, value=1.0)
-to_cur = st.text_input("Target Currency (e.g. USD)", "USD").upper()
+
+# Check if we have currencies loaded before showing the dropdown
+if hasattr(st.session_state.cnc, 'available_currencies') and st.session_state.cnc.available_currencies:
+    # THIS IS THE SCROLLING LIST:
+    to_cur = st.selectbox("Target Currency", st.session_state.cnc.available_currencies)
+else:
+    # Fallback if the user hasn't clicked 'Fetch' yet
+    to_cur = st.text_input("Target Currency (e.g. USD)", "USD").upper()
 
 # 3. Perform Conversion
 if st.button("Convert"):
     result = st.session_state.cnc.convert(amount, base, to_cur)
-    st.metric(label="Result", value=f"{result} {to_cur}")
+    st.metric(label="Result", value=f"{result:.2f} {to_cur}")
     
 # 4. History Sidebar
 st.sidebar.header("Transaction History")

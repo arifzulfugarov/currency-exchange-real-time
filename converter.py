@@ -3,10 +3,11 @@ import time
 
 
 class CurrencyConverter:
-    def __init__(self):
+    def __init__(self, available_currencies):
         self.rates = {}
         self.history = []
         self.last_updated = None
+        self.available_currencies = []
 
     def fetch_rates(self, base_currency: str):
 
@@ -20,6 +21,8 @@ class CurrencyConverter:
         self.rates = data["rates"]
         self.base_currency = data["base"]
         self.last_updated = time.time()
+        self.available_currencies = sorted(list(self.rates.keys()))
+        self.available_currencies.append(base_currency)
 
     def convert(self, amount, from_cur, to_cur) -> float:
 
@@ -33,7 +36,7 @@ class CurrencyConverter:
             print(f"Error: {to_cur} not found!")
             return 0.0
         
-        note = f"{amount} {from_cur} in {to_cur} is {total}"
+        note = f"{amount} {from_cur} in {to_cur} is {total:.2f}"
         self.history.append(note)
         return total
 
