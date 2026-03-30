@@ -18,7 +18,7 @@ if st.button("Fetch Latest Rates"):
     st.success(f"Rates loaded for {base}!")
 
 # 2. Conversion Inputs
-amount = st.number_input("Amount to convert", min_value=0.0, value=1.0)
+amount = st.number_input("Amount to convert", min_value=0.0, value=1.0, step=1.0)
 
 # Check if we have currencies loaded
 if st.session_state.cnc.available_currencies:
