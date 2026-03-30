@@ -3,7 +3,7 @@ import time
 
 
 class CurrencyConverter:
-    def __init__(self, available_currencies):
+    def __init__(self):
         self.rates = {}
         self.history = []
         self.last_updated = None
@@ -21,8 +21,9 @@ class CurrencyConverter:
         self.rates = data["rates"]
         self.base_currency = data["base"]
         self.last_updated = time.time()
-        self.available_currencies = sorted(list(self.rates.keys()))
+        self.available_currencies = list(self.rates.keys())
         self.available_currencies.append(base_currency)
+        self.available_currencies.sort()
 
     def convert(self, amount, from_cur, to_cur) -> float:
 

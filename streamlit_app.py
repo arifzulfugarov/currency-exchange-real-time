@@ -19,12 +19,13 @@ options = st.session_state.cnc.available_currencies
 # 2. Conversion Inputs
 amount = st.number_input("Amount to convert", min_value=0.0, value=1.0)
 
-# Check if we have currencies loaded before showing the dropdown
-if hasattr(st.session_state.cnc, 'available_currencies') and st.session_state.cnc.available_currencies:
-    # THIS IS THE SCROLLING LIST:
-    to_cur = st.selectbox("Target Currency", st.session_state.cnc.available_currencies)
+
+if st.session_state.cnc.available_currencies:
+    # Get the list only when we know it exists
+    options = st.session_state.cnc.available_currencies
+    to_cur = st.selectbox("Target Currency", options)
 else:
-    # Fallback if the user hasn't clicked 'Fetch' yet
+    # Use the text input as a backup if they haven't fetched yet
     to_cur = st.text_input("Target Currency (e.g. USD)", "USD").upper()
 
 # 3. Perform Conversion
