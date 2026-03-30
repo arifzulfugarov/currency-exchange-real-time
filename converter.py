@@ -33,7 +33,7 @@ class CurrencyConverter:
             print(f"Error: {to_cur} not found!")
             return 0.0
         
-        note = f"{amount}{from_cur} to {to_cur}"
+        note = f"{amount}{from_cur} in {to_cur} is {total}"
         self.history.append(note)
         return total
 
