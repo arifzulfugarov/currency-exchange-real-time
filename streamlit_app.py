@@ -21,7 +21,7 @@ to_cur = st.text_input("Target Currency (e.g. USD)", "USD").upper()
 # 3. Perform Conversion
 if st.button("Convert"):
     result = st.session_state.cnc.convert(amount, base, to_cur)
-    st.metric(label="Result", value=f"{result:.2f} {to_cur}")
+    st.metric(label="Result", value=f"{result} {to_cur}")
     
 # 4. History Sidebar
 st.sidebar.header("Transaction History")
