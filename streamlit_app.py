@@ -36,6 +36,10 @@ else:
         key="target_text"
     ).upper()
 
+if st.button("Convert Now"):
+    result = st.session_state.cnc.convert(amount, base, to_cur)
+    st.metric(label="Result", value=f"{result:.2f} {to_cur}")
+
 # --- SCROLLING LOGIC END ---
 
 # 4. History Sidebar
