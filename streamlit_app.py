@@ -45,7 +45,7 @@ if cnc.available_currencies:
     amount_text = debounced_input(
         "Amount to convert",
         value=st.session_state.amount_text,
-        debounce_ms=500,
+        debounce_ms=750,
         key="amount_debounced",
     )
 
