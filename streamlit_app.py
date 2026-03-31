@@ -5,7 +5,8 @@ st.title("🌍 Real-Time Currency Converter")
 
 # 1. Initialize our class with your App ID
 # Get your ID from https://openexchangerates.org
-APP_ID = "YOUR_OPEN_EXCHANGE_APP_ID" 
+amount = st.number_input("Amount to convert", min_value=0.0, value=1.0)
+APP_ID = "1b6f163b75084ce4b7a6bf0eb4282839" 
 
 if 'cnc' not in st.session_state:
     st.session_state.cnc = CurrencyConverter()
@@ -31,7 +32,6 @@ else:
     st.error("Could not load currencies. Check your API Key.")
 
 # 3. Conversion Inputs
-amount = st.number_input("Amount to convert", min_value=0.0, value=1.0, step=1.0)
 
 if st.button("Convert Now"):
     # We don't need to fetch_rates again here because we already have them all!

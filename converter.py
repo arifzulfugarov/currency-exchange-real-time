@@ -1,7 +1,6 @@
 import requests
 import time
 
-
 class CurrencyConverter:
     def __init__(self):
         self.rates = {}
@@ -11,45 +10,40 @@ class CurrencyConverter:
 
     def fetch_rates(self, app_id: str):
         self.app_id = app_id
-        # Correct endpoint for the latest rates
-        url = f"https://openexchangerates.org{self.app_id}"
+        # FIXED: Added the full endpoint path and query parameter
+        url = f"https://openexchangerates.org/api/latest.json?app_id={app_id}"
+
         
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
         
         self.rates = data["rates"]
-        # We must also add 'USD' to the rates as 1.0 because it's the base
+        # Ensure USD is present as the base
         self.rates["USD"] = 1.0 
         
         self.last_updated = time.time()
         self.available_currencies = sorted(self.rates.keys())
 
-
     def convert(self, amount, from_cur, to_cur) -> float:
-
         if from_cur == to_cur:
             return amount
         
-        if to_cur in self.rates:
-            rate = self.rates[to_cur]
-            total = amount * rate
+        # FIXED: Cross-rate math for non-USD starting currencies
+        if from_cur in self.rates and to_cur in self.rates:
+            # Step 1: Divide by from_cur rate to get USD value
+            # Step 2: Multiply by to_cur rate to get final value
+            total = (amount / self.rates[from_cur]) * self.rates[to_cur]
         else:
-            print(f"Error: {to_cur} not found!")
+            print(f"Error: {from_cur} or {to_cur} not found!")
             return 0.0
         
-        note = f"{amount} {from_cur} in {to_cur} is {total:.2f}"
+        note = f"{amount} {from_cur} is {total:.2f} {to_cur}"
         self.history.append(note)
         return total
 
     def get_history(self) -> list:
-        
         return self.history
     
     def clear_history(self):
-
         self.history = []
-
-
-
-
