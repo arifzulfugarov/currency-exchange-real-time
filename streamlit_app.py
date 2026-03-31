@@ -45,7 +45,7 @@ if cnc.available_currencies:
     amount_text = debounced_input(
         "Amount to convert",
         value=st.session_state.amount_text,
-        debounce_ms=250,
+        debounce_ms=500,
         key="amount_debounced",
     )
 
@@ -54,7 +54,7 @@ if cnc.available_currencies:
     else:
         st.session_state.amount_text = amount_text
 
-    st.caption("Updates about 250 ms after typing stops.")
+    st.caption("Updates 1 second after typing stops.")
 
     from_col, swap_col, to_col = st.columns([1, 0.35, 1])
 
