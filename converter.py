@@ -25,7 +25,7 @@ class CurrencyConverter:
         self.last_updated = time.time()
         self.available_currencies = sorted(self.rates.keys())
 
-    def convert(self, amount, from_cur, to_cur) -> float:
+    def convert(self, amount, from_cur, to_cur, save_to_history=True) -> float:
         if from_cur == to_cur:
             return amount
         
