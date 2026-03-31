@@ -5,7 +5,7 @@ st.title("🌍 Real-Time Currency Converter")
 
 # 1. Initialize our class with your App ID
 # Get your ID from https://openexchangerates.org
-amount = st.number_input("Amount to convert", min_value=0.0, value=1.0)
+amount = st.number_input("Amount to convert", min_value=0.0, value=1.0, step=1.0)
 APP_ID = "1b6f163b75084ce4b7a6bf0eb4282839" 
 
 if 'cnc' not in st.session_state:
