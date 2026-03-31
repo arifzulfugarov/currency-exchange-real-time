@@ -5,7 +5,7 @@ _DEBOUNCED_INPUT = st.components.v2.component(
     "debounced_number_input",
     html="""
     <label class="debounced-input__label" for="debounced-input"></label>
-    <input id="debounced-input" class="debounced-input__field" type="number" step="any" />
+    <input id="debounced-input" class="debounced-input__field" type="text" inputmode="decimal" />
     """,
     css="""
     :host {
@@ -50,15 +50,44 @@ _DEBOUNCED_INPUT = st.components.v2.component(
 
         label.textContent = data?.label ?? "";
 
-        if (input.value !== String(nextValue)) {
-            input.value = nextValue;
+        function sanitizeValue(rawValue) {
+            const cleaned = String(rawValue ?? "").replace(/[^0-9.]/g, "");
+            const firstDotIndex = cleaned.indexOf(".");
+            const hasDot = firstDotIndex !== -1;
+
+            let integerPart = hasDot ? cleaned.slice(0, firstDotIndex) : cleaned;
+            let fractionPart = hasDot ? cleaned.slice(firstDotIndex + 1).replace(/\./g, "") : "";
+
+            if (hasDot && integerPart === "") {
+                integerPart = "0";
+            }
+
+            if (integerPart.length > 1) {
+                integerPart = integerPart.replace(/^0+/, "");
+                if (integerPart === "") {
+                    integerPart = "0";
+                }
+            }
+
+            if (!hasDot && integerPart === "0") {
+                return "";
+            }
+
+            return hasDot ? `${integerPart}.${fractionPart}` : integerPart;
+        }
+
+        const sanitizedNextValue = sanitizeValue(nextValue);
+
+        if (input.value !== sanitizedNextValue) {
+            input.value = sanitizedNextValue;
         }
 
         if (!input.dataset.bound) {
             let timeoutId = null;
 
             input.addEventListener("input", (event) => {
-                const typedValue = event.target.value;
+                const typedValue = sanitizeValue(event.target.value);
+                event.target.value = typedValue;
                 window.clearTimeout(timeoutId);
                 timeoutId = window.setTimeout(() => {
                     setStateValue("value", typedValue);

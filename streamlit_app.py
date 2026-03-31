@@ -31,7 +31,7 @@ if cnc.available_currencies:
     currencies = cnc.available_currencies
 
     if "amount_text" not in st.session_state:
-        st.session_state.amount_text = "0"
+        st.session_state.amount_text = "1"
     if "from_cur" not in st.session_state:
         st.session_state.from_cur = "EUR" if "EUR" in currencies else currencies[0]
     if "to_cur" not in st.session_state:
@@ -54,7 +54,7 @@ if cnc.available_currencies:
     else:
         st.session_state.amount_text = amount_text
 
-    st.caption("Updates 1 second after typing stops.")
+    st.caption("Updates about 500 ms after typing stops.")
 
     from_col, swap_col, to_col = st.columns([1, 0.35, 1])
 
@@ -83,6 +83,11 @@ if cnc.available_currencies:
 
     try:
         amount = float(amount_text.strip()) if amount_text.strip() else 0.0
+
+        if amount <= 0:
+            st.warning("Please enter an amount greater than 0.")
+            st.stop()
+
         result = cnc.convert(amount, from_cur, to_cur, save_to_history=False)
         rate = cnc.convert(1, from_cur, to_cur, save_to_history=False)
 
