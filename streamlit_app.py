@@ -3,54 +3,46 @@ from converter import CurrencyConverter
 
 st.title("🌍 Real-Time Currency Converter")
 
-# Initialize our class
-# Initialize our class AND fetch initial data for the full list
+# 1. Initialize our class with your App ID
+# Get your ID from https://openexchangerates.org
+APP_ID = "YOUR_OPEN_EXCHANGE_APP_ID" 
+
 if 'cnc' not in st.session_state:
     st.session_state.cnc = CurrencyConverter()
-    # Fetch once automatically so the dropdowns have all countries immediately
-    st.session_state.cnc.fetch_rates("EUR")
+    # Fetch all rates once (relative to USD)
+    with st.spinner("Fetching global currency data..."):
+        st.session_state.cnc.fetch_rates(APP_ID)
 
-# 1. Setup Base Currency with THE FULL LIST
-# Now we use the list we just fetched automatically!
-base = st.selectbox(
-    "1. Select Base Currency", 
-    st.session_state.cnc.available_currencies,
-    index=st.session_state.cnc.available_currencies.index("EUR") # Default to EUR
-)
-
-
-# 2. Conversion Inputs
-amount = st.number_input("Amount to convert", min_value=0.0, value=1.0, step=1.0)
-
-# Check if we have currencies loaded
+# 2. Selectbox for "From" and "To"
+# Since we have ALL rates (AZN, KZT, etc.) in the list, we just pick from them
 if st.session_state.cnc.available_currencies:
-    # ADDED: key="selectbox_target"
-    to_cur = st.selectbox(
-        "3. Select Target Currency", 
+    from_cur = st.selectbox(
+        "1. Convert From", 
         st.session_state.cnc.available_currencies,
-        key="target_select" 
+        index=st.session_state.cnc.available_currencies.index("USD")
+    )
+    
+    to_cur = st.selectbox(
+        "2. Convert To", 
+        st.session_state.cnc.available_currencies,
+        index=st.session_state.cnc.available_currencies.index("AZN")
     )
 else:
-    # ADDED: key="text_target"
-    to_cur = st.text_input(
-        "Target Currency (e.g. USD)", 
-        "USD", 
-        key="target_text"
-    ).upper()
+    st.error("Could not load currencies. Check your API Key.")
+
+# 3. Conversion Inputs
+amount = st.number_input("Amount to convert", min_value=0.0, value=1.0, step=1.0)
 
 if st.button("Convert Now"):
-    # 1. Fetch the LATEST rates for the base the user JUST picked
-    with st.spinner(f"Fetching latest rates for {base}..."):
-        st.session_state.cnc.fetch_rates(base)
+    # We don't need to fetch_rates again here because we already have them all!
+    # The math happens inside the converter class
+    result = st.session_state.cnc.convert(amount, from_cur, to_cur)
     
-    # 2. Now perform the math with the correct board
-    result = st.session_state.cnc.convert(amount, base, to_cur)
-    
-    # 3. Display and celebrate
-    st.metric(label=f"Result ({to_cur})", value=f"{result:.2f}")
-    st.balloons()
-
-# --- SCROLLING LOGIC END ---
+    if result > 0:
+        st.metric(label=f"Result ({to_cur})", value=f"{result:.2f}")
+        st.balloons()
+    else:
+        st.error("Conversion failed. Please try again.")
 
 # 4. History Sidebar
 st.sidebar.header("Transaction History")

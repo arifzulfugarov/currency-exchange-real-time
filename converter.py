@@ -9,21 +9,22 @@ class CurrencyConverter:
         self.last_updated = None
         self.available_currencies = []
 
-    def fetch_rates(self, base_currency: str):
-
-        url = f"https://api.frankfurter.app/latest?from={base_currency}"
+    def fetch_rates(self, app_id: str):
+        self.app_id = app_id
+        # Correct endpoint for the latest rates
+        url = f"https://openexchangerates.org{self.app_id}"
+        
         response = requests.get(url)
         response.raise_for_status()
-
         data = response.json()
-        if "rates" not in data:
-            raise ValueError('Invalid API response')
+        
         self.rates = data["rates"]
-        self.base_currency = data["base"]
+        # We must also add 'USD' to the rates as 1.0 because it's the base
+        self.rates["USD"] = 1.0 
+        
         self.last_updated = time.time()
-        self.available_currencies = list(self.rates.keys())
-        self.available_currencies.append(base_currency)
-        self.available_currencies.sort()
+        self.available_currencies = sorted(self.rates.keys())
+
 
     def convert(self, amount, from_cur, to_cur) -> float:
 
