@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debounced Input</title>
+    <script src="https://unpkg.com/streamlit-component-lib@2.0.0/dist/index.js"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgb(49, 51, 63);
+      }
+
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid rgba(49, 51, 63, 0.2);
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.4;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      input:focus {
+        border-color: rgb(255, 75, 75);
+        box-shadow: 0 0 0 1px rgb(255, 75, 75);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <label id="input-label" for="debounced-input"></label>
+      <input id="debounced-input" type="text" inputmode="decimal" />
+    </div>
+
+    <script>
+      const input = document.getElementById("debounced-input");
+      const label = document.getElementById("input-label");
+
+      let debounceHandle = null;
+      let currentValue = "";
+
+      function sendValue(value) {
+        currentValue = value;
+        Streamlit.setComponentValue(value);
+      }
+
+      function queueValue(value, debounceMs) {
+        window.clearTimeout(debounceHandle);
+        debounceHandle = window.setTimeout(() => {
+          sendValue(value);
+        }, debounceMs);
+      }
+
+      input.addEventListener("input", () => {
+        const debounceMs =
+          window.__STREAMLIT_DEBOUNCE_MS__ === undefined
+            ? 1000
+            : window.__STREAMLIT_DEBOUNCE_MS__;
+        queueValue(input.value, debounceMs);
+      });
+
+      function onRender(event) {
+        const { label: nextLabel, value, debounce_ms: debounceMs } =
+          event.detail.args;
+
+        window.__STREAMLIT_DEBOUNCE_MS__ = debounceMs;
+        label.textContent = nextLabel;
+
+        if (document.activeElement !== input && value !== currentValue) {
+          input.value = value ?? "";
+          currentValue = input.value;
+        }
+
+        Streamlit.setFrameHeight(86);
+      }
+
+      Streamlit.events.addEventListener(Streamlit.RENDER_EVENT, onRender);
+      Streamlit.setComponentReady();
+      Streamlit.setFrameHeight(86);
+    </script>
+  </body>
+</html>
