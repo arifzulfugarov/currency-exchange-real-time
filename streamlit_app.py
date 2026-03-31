@@ -45,7 +45,7 @@ if cnc.available_currencies:
     amount_text = debounced_input(
         "Amount to convert",
         value=st.session_state.amount_text,
-        debounce_ms=1000,
+        debounce_ms=250,
         key="amount_debounced",
     )
 
@@ -54,7 +54,7 @@ if cnc.available_currencies:
     else:
         st.session_state.amount_text = amount_text
 
-    st.caption("Updates 1 second after typing stops.")
+    st.caption("Updates about 250 ms after typing stops.")
 
     from_col, swap_col, to_col = st.columns([1, 0.35, 1])
 
@@ -65,20 +65,20 @@ if cnc.available_currencies:
             key="from_cur",
         )
 
-    with swap_col:
-        st.write("")
-        st.write("")
-        st.button(
-            "Reverse",
-            use_container_width=True,
-            on_click=swap_currencies,
-        )
-
     with to_col:
         to_cur = st.selectbox(
             "2. Convert To",
             currencies,
             key="to_cur",
+        )
+
+    with swap_col:
+        st.write("")
+        st.write("")
+        st.button(
+            "<->",
+            use_container_width=True,
+            on_click=swap_currencies,
         )
 
     try:
