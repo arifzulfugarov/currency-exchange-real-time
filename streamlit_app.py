@@ -5,7 +5,7 @@ st.set_page_config(page_title="Currency Converter", page_icon="🌍")
 
 st.title("🌍 Real-Time Currency Converter")
 
-APP_ID = "1b6f163b75084ce4b7a6bf0eb4282839"
+APP_ID = "1b6f163b75084ce4b7a6bf0eb4282839" # better than hardcoding
 
 if "cnc" not in st.session_state:
     st.session_state.cnc = CurrencyConverter()
@@ -20,10 +20,10 @@ cnc = st.session_state.cnc
 if cnc.available_currencies:
     currencies = cnc.available_currencies
 
-    from_default = currencies.index("USD") if "USD" in currencies else 0
-    to_default = currencies.index("AZN") if "AZN" in currencies else 0
+    from_default = currencies.index("EUR") if "EUR" in currencies else 0
+    to_default = currencies.index("HUF") if "HUF" in currencies else 0
 
-    amount_text = st.text_input("Amount to convert", value="1")
+    amount_text = st.text_input("Amount to convert", value="0")
 
     from_cur = st.selectbox(
         "1. Convert From",
@@ -38,7 +38,7 @@ if cnc.available_currencies:
     )
 
     try:
-        amount = float(amount_text) if amount_text.strip() else 0.0
+        amount = float(amount_text.strip()) if amount_text.strip() else 0.0
 
         result = cnc.convert(amount, from_cur, to_cur, save_to_history=False)
         rate = cnc.convert(1, from_cur, to_cur, save_to_history=False)
