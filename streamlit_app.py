@@ -5,10 +5,8 @@ st.set_page_config(page_title="Currency Converter", page_icon="🌍")
 
 st.title("🌍 Real-Time Currency Converter")
 
-# Use Streamlit secrets in real projects
 APP_ID = "1b6f163b75084ce4b7a6bf0eb4282839"
 
-# Initialize converter once
 if "cnc" not in st.session_state:
     st.session_state.cnc = CurrencyConverter()
     try:
@@ -25,12 +23,7 @@ if cnc.available_currencies:
     from_default = currencies.index("USD") if "USD" in currencies else 0
     to_default = currencies.index("AZN") if "AZN" in currencies else 0
 
-    amount = st.number_input(
-        "Amount to convert",
-        min_value=0.0,
-        value=1.0,
-        step=1.0
-    )
+    amount_text = st.text_input("Amount to convert", value="1")
 
     from_cur = st.selectbox(
         "1. Convert From",
@@ -45,7 +38,8 @@ if cnc.available_currencies:
     )
 
     try:
-        
+        amount = float(amount_text) if amount_text.strip() else 0.0
+
         result = cnc.convert(amount, from_cur, to_cur, save_to_history=False)
         rate = cnc.convert(1, from_cur, to_cur, save_to_history=False)
 
@@ -56,12 +50,9 @@ if cnc.available_currencies:
 
         st.caption(f"1 {from_cur} = {rate:.4f} {to_cur}")
 
+    except ValueError:
+        st.warning("Please enter a valid number.")
     except Exception as e:
         st.error(f"Conversion failed: {e}")
 else:
     st.error("Could not load currencies. Check your API key.")
-
-# Sidebar history
-st.sidebar.header("Transaction History")
-for item in reversed(cnc.get_history()):
-    st.sidebar.write(item)
